@@ -417,6 +417,65 @@
             color: #52525b;
             font-size: 0.85rem;
         }
+
+        .footer .credits {
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #71717a;
+        }
+
+        .footer .credits a {
+            color: #a1a1aa;
+            text-decoration: none;
+        }
+
+        .footer .credits a:hover {
+            text-decoration: underline;
+        }
+
+        .sources-section {
+            margin-top: 40px;
+            padding: 24px;
+            background: #18181b;
+            border: 1px solid #27272a;
+            border-radius: 12px;
+        }
+
+        .sources-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #71717a;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 16px;
+        }
+
+        .sources-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .source-item {
+            font-size: 0.7rem;
+            color: #52525b;
+            line-height: 1.5;
+        }
+
+        .source-item a {
+            color: #71717a;
+            text-decoration: none;
+        }
+
+        .source-item a:hover {
+            text-decoration: underline;
+            color: #a1a1aa;
+        }
+
+        .source-category {
+            color: #71717a;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -1185,7 +1244,41 @@
                     )}
 
                     <footer className="footer">
-                        <p>{t.footer}</p>
+                        <div className="credits">
+                            Made with ❤️ by <a href="https://github.com/mrstrawciu" target="_blank" rel="noopener noreferrer">MrStrawciu</a> & <a href="https://claude.ai" target="_blank" rel="noopener noreferrer">Claude Opus</a>
+                        </div>
+
+                        <div className="sources-section">
+                            <div className="sources-title">{lang === 'pl' ? 'Źródła danych' : 'Data Sources'}</div>
+                            <div className="sources-list">
+                                <div className="source-item">
+                                    <span className="source-category">{lang === 'pl' ? 'Tętno' : 'Heart rate'}:</span> American Heart Association – <a href="https://www.heart.org/en/health-topics/high-blood-pressure/the-facts-about-high-blood-pressure/all-about-heart-rate-pulse" target="_blank" rel="noopener noreferrer">60-100 bpm at rest</a>
+                                </div>
+                                <div className="source-item">
+                                    <span className="source-category">{lang === 'pl' ? 'Oddychanie' : 'Respiration'}:</span> Johns Hopkins Medicine – <a href="https://www.hopkinsmedicine.org/health/conditions-and-diseases/vital-signs-body-temperature-pulse-rate-respiration-rate-blood-pressure" target="_blank" rel="noopener noreferrer">12-16 breaths/min</a>
+                                </div>
+                                <div className="source-item">
+                                    <span className="source-category">{lang === 'pl' ? 'Mruganie' : 'Blinking'}:</span> Healthline / PMC Studies – <a href="https://www.healthline.com/health/how-many-times-do-you-blink-a-day" target="_blank" rel="noopener noreferrer">15-20 blinks/min</a>
+                                </div>
+                                <div className="source-item">
+                                    <span className="source-category">{lang === 'pl' ? 'Spożycie płynów' : 'Fluid intake'}:</span> European Food Safety Authority (EFSA) – <a href="https://www.efsa.europa.eu/en/efsajournal/pub/1459" target="_blank" rel="noopener noreferrer">2.0-2.5 L/day</a>
+                                </div>
+                                <div className="source-item">
+                                    <span className="source-category">{lang === 'pl' ? 'Częstość oddawania moczu' : 'Urination frequency'}:</span> Medical News Today / Cleveland Clinic – <a href="https://www.medicalnewstoday.com/articles/321461" target="_blank" rel="noopener noreferrer">6-7 times/day</a>
+                                </div>
+                                <div className="source-item">
+                                    <span className="source-category">{lang === 'pl' ? 'Spożycie żywności' : 'Food consumption'}:</span> FAO/WHO – <a href="https://www.fao.org/4/ac911e/ac911e05.htm" target="_blank" rel="noopener noreferrer">~1.8 kg/day average</a>
+                                </div>
+                                <div className="source-item">
+                                    <span className="source-category">{lang === 'pl' ? 'Sen' : 'Sleep'}:</span> National Sleep Foundation – 7-9 hours recommended for adults
+                                </div>
+                                <div className="source-item">
+                                    <span className="source-category">{lang === 'pl' ? 'Cykl księżycowy' : 'Lunar cycle'}:</span> NASA – 29.53 days synodic month
+                                </div>
+                            </div>
+                        </div>
+
+                        <p style={{marginTop: '20px'}}>{t.footer}</p>
                     </footer>
                 </div>
             );
