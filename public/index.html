@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeStats</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0b;
+            color: #e4e4e7;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .language-selector {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: flex;
+            gap: 8px;
+        }
+
+        .lang-btn {
+            background: #18181b;
+            border: 1px solid #27272a;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #71717a;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .lang-btn:hover {
+            border-color: #3f3f46;
+            color: #a1a1aa;
+        }
+
+        .lang-btn.active {
+            background: #27272a;
+            border-color: #3f3f46;
+            color: #e4e4e7;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: #71717a;
+            font-size: 1rem;
+        }
+
+        .age-hero {
+            background: linear-gradient(135deg, #18181b 0%, #1f1f23 100%);
+            border: 1px solid #27272a;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .age-display {
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .age-display .label {
+            font-size: 0.85rem;
+            color: #71717a;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 12px;
+        }
+
+        .age-main {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #fafafa;
+            line-height: 1;
+        }
+
+        .age-main .suffix {
+            font-size: 1.5rem;
+            color: #71717a;
+            font-weight: 500;
+        }
+
+        .zodiac-display {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .zodiac-card {
+            background: #0a0a0b;
+            border: 1px solid #27272a;
+            border-radius: 16px;
+            padding: 20px 28px;
+            text-align: center;
+            min-width: 140px;
+        }
+
+        .zodiac-card .icon {
+            font-size: 2.8rem;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .zodiac-card .name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #e4e4e7;
+            margin-bottom: 4px;
+        }
+
+        .zodiac-card .type {
+            font-size: 0.7rem;
+            color: #52525b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .date-input-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 50px;
+        }
+
+        .date-input-wrapper {
+            background: #18181b;
+            border: 1px solid #27272a;
+            border-radius: 12px;
+            padding: 20px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .date-input-wrapper label {
+            color: #a1a1aa;
+            font-size: 0.9rem;
+        }
+
+        .date-fields {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .date-field {
+            background: #0a0a0b;
+            border: 1px solid #3f3f46;
+            border-radius: 8px;
+            padding: 10px;
+            color: #e4e4e7;
+            font-size: 1.2rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .date-field:focus {
+            border-color: #52525b;
+        }
+
+        .date-field.day, .date-field.month {
+            width: 60px;
+        }
+
+        .date-field.year {
+            width: 90px;
+        }
+
+        .date-separator {
+            color: #52525b;
+            font-size: 1.5rem;
+            font-weight: 300;
+        }
+
+        .date-field::placeholder {
+            color: #3f3f46;
+        }
+
+        .stats-section {
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #27272a;
+        }
+
+        .section-icon {
+            font-size: 1.3rem;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #a1a1aa;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .stat-card:hover {
+            border-color: #3f3f46;
+            transform: translateY(-2px);
+        }
+
+        .stat-card.live {
+            border-color: #22c55e20;
+        }
+
+        .stat-card.live .stat-value {
+            color: #4ade80;
+        }
+
+        .stat-icon {
+            font-size: 1.8rem;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .stat-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #71717a;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #fafafa;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .stat-suffix {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #71717a;
+        }
+
+        .stat-full {
+            font-size: 0.7rem;
+            color: #52525b;
+            width: 100%;
+            margin-top: 2px;
+            font-weight: 400;
+        }
+
+        .stat-detail {
+            font-size: 0.75rem;
+            color: #52525b;
+            margin-top: 4px;
+        }
+
+        .share-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: transparent;
+            border: 1px solid #27272a;
+            border-radius: 6px;
+            padding: 6px 8px;
+            color: #52525b;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            opacity: 0;
+        }
+
+        .stat-card {
+            background: #18181b;
+            border: 1px solid #27272a;
+            border-radius: 14px;
+            padding: 20px;
+            transition: border-color 0.2s, transform 0.2s;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            position: relative;
+        }
+
+        .stat-card:hover .share-btn {
+            opacity: 1;
+        }
+
+        .share-btn:hover {
+            border-color: #3f3f46;
+            color: #a1a1aa;
+            background: #27272a;
+        }
+
+        .share-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #22c55e;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            z-index: 1000;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .live-indicator {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: #22c55e;
+            border-radius: 50%;
+            margin-right: 6px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #52525b;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #27272a;
+            color: #52525b;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Translations
+        const translations = {
+            en: {
+                title: 'LifeStats',
+                subtitle: 'Your life in numbers',
+                birthDate: 'Your birth date:',
+                emptyState: 'Enter your birth date to see your life stats ↑',
+                footer: 'LifeStats • All statistics are estimates based on averages',
+                yourAge: 'Your Age',
+                years: 'years',
+                days: 'days',
+                hours: 'hours',
+                minutes: 'minutes',
+                seconds: 'seconds',
+                westernZodiac: 'Western Zodiac',
+                chineseZodiac: 'Chinese Zodiac',
+                share: 'Share',
+                copied: 'Copied to clipboard!',
+                shareMessages: {
+                    seconds: "Wow, I've been alive for {value} seconds! And you? Check your stats at LifeStats 🎉",
+                    days: "I've lived {value} days on Earth! How about you? 🌍",
+                    orbits: "I've completed {value} orbits around the Sun! 🌞 Check yours!",
+                    fullMoons: "I've witnessed {value} full moons in my life! 🌕",
+                    heartbeats: "My heart has beaten {value} times! ❤️ What's your count?",
+                    breaths: "I've taken {value} breaths in my lifetime! 🌬️",
+                    blinks: "I've blinked {value} times! 👁️ Mind-blowing, right?",
+                    yearsAsleep: "I've spent {value} years sleeping! 😴 Sweet dreams!",
+                    dreams: "I've had approximately {value} dreams! 💭",
+                    foodEaten: "I've eaten {value} of food in my life! 🍔",
+                    liquidsDrunk: "I've drunk {value} of liquids! 🥤 Stay hydrated!",
+                    pizzas: "I've eaten approximately {value} pizzas! 🍕 Yummy!",
+                    coffees: "I've had about {value} cups of coffee! ☕",
+                    timesPeed: "I've peed {value} times in my life! 💧 TMI? Check yours!",
+                    timesPooped: "I've pooped {value} times! 💩 Now that's a stat!",
+                    steps: "I've taken {value} steps in my life! 👟 Keep walking!",
+                    words: "I've spoken approximately {value} words! 🗣️ Chatty, right?",
+                    kmSpace: "I've traveled {value} through space on Earth! 🌍🚀"
+                },
+                sections: {
+                    timeAlive: 'Time Alive',
+                    body: 'Body',
+                    foodDrinks: 'Food & Drinks',
+                    bathroom: 'Bathroom Visits',
+                    activity: 'Activity & Travel'
+                },
+                stats: {
+                    seconds: 'Seconds',
+                    days: 'Days',
+                    orbits: 'Orbits around Sun',
+                    yearsOnEarth: 'Years on Earth',
+                    fullMoons: 'Full moons',
+                    moonCycle: 'Cycle: 29.53 days',
+                    heartbeats: 'Heartbeats',
+                    bpm: '~70 bpm',
+                    breaths: 'Breaths',
+                    breathsPerMin: '~16 per minute',
+                    blinks: 'Blinks',
+                    blinksPerMin: '~17 per minute',
+                    yearsAsleep: 'Years asleep',
+                    sleepPerNight: '~8 hrs/night',
+                    dreams: 'Dreams',
+                    dreamsPerNight: '~5 per night',
+                    foodEaten: 'Food eaten',
+                    foodPerDay: '~1.8 kg/day',
+                    liquidsDrunk: 'Liquids drunk',
+                    liquidsPerDay: '~2.5 L/day',
+                    pizzas: 'Pizzas',
+                    pizzasPerYear: '~12 per year',
+                    coffees: 'Coffees',
+                    coffeesPerDay: '~1.5 per day',
+                    timesPeed: 'Times peed',
+                    peePerDay: '~7 per day',
+                    timesPooped: 'Times pooped',
+                    poopPerDay: '~1.5 per day',
+                    steps: 'Steps taken',
+                    stepsPerDay: '~5,000 per day',
+                    words: 'Words spoken',
+                    wordsPerDay: '~16,000 per day',
+                    kmSpace: 'Km through space',
+                    earthSpeed: 'Earth: 107,000 km/h'
+                }
+            },
+            pl: {
+                title: 'LifeStats',
+                subtitle: 'Twoje życie w liczbach',
+                birthDate: 'Twoja data urodzenia:',
+                emptyState: 'Wpisz datę urodzenia, aby zobaczyć statystyki ↑',
+                footer: 'LifeStats • Wszystkie statystyki są szacunkowe',
+                yourAge: 'Twój wiek',
+                years: 'lat',
+                days: 'dni',
+                hours: 'godzin',
+                minutes: 'minut',
+                seconds: 'sekund',
+                westernZodiac: 'Znak zodiaku',
+                chineseZodiac: 'Chiński zodiak',
+                share: 'Udostępnij',
+                copied: 'Skopiowano!',
+                shareMessages: {
+                    seconds: "Wow, żyję już {value} sekund! A Ty? Sprawdź swoje statystyki na LifeStats 🎉",
+                    days: "Przeżyłem/am {value} dni na Ziemi! A Ty? 🌍",
+                    orbits: "Okrążyłem/am Słońce {value} razy! 🌞 Sprawdź swój wynik!",
+                    fullMoons: "Widziałem/am {value} pełni księżyca! 🌕",
+                    heartbeats: "Moje serce uderzyło {value} razy! ❤️ A Twoje?",
+                    breaths: "Wziąłem/am {value} oddechów! 🌬️",
+                    blinks: "Mrugnąłem/am {value} razy! 👁️ Niesamowite, prawda?",
+                    yearsAsleep: "Przespałem/am {value} lat! 😴 Słodkich snów!",
+                    dreams: "Miałem/am około {value} snów! 💭",
+                    foodEaten: "Zjadłem/am {value} jedzenia! 🍔",
+                    liquidsDrunk: "Wypiłem/am {value} płynów! 🥤 Nawadniaj się!",
+                    pizzas: "Zjadłem/am około {value} pizz! 🍕 Mniam!",
+                    coffees: "Wypiłem/am około {value} kaw! ☕",
+                    timesPeed: "Siusiałem/am {value} razy! 💧 Za dużo info? Sprawdź swoje!",
+                    timesPooped: "Zrobiłem/am kupę {value} razy! 💩 To dopiero statystyka!",
+                    steps: "Zrobiłem/am {value} kroków! 👟 Idź dalej!",
+                    words: "Wypowiedziałem/am około {value} słów! 🗣️ Gadatliwy/a, co?",
+                    kmSpace: "Przebyłem/am {value} przez kosmos na Ziemi! 🌍🚀"
+                },
+                sections: {
+                    timeAlive: 'Czas życia',
+                    body: 'Ciało',
+                    foodDrinks: 'Jedzenie i napoje',
+                    bathroom: 'Wizyty w łazience',
+                    activity: 'Aktywność i podróże'
+                },
+                stats: {
+                    seconds: 'Sekundy',
+                    days: 'Dni',
+                    orbits: 'Okrążenia Słońca',
+                    yearsOnEarth: 'Lata na Ziemi',
+                    fullMoons: 'Pełnie księżyca',
+                    moonCycle: 'Cykl: 29,53 dni',
+                    heartbeats: 'Uderzenia serca',
+                    bpm: '~70 na minutę',
+                    breaths: 'Oddechy',
+                    breathsPerMin: '~16 na minutę',
+                    blinks: 'Mrugnięcia',
+                    blinksPerMin: '~17 na minutę',
+                    yearsAsleep: 'Lata snu',
+                    sleepPerNight: '~8 godz/noc',
+                    dreams: 'Sny',
+                    dreamsPerNight: '~5 na noc',
+                    foodEaten: 'Zjedzone jedzenie',
+                    foodPerDay: '~1,8 kg/dzień',
+                    liquidsDrunk: 'Wypite napoje',
+                    liquidsPerDay: '~2,5 L/dzień',
+                    pizzas: 'Pizze',
+                    pizzasPerYear: '~12 rocznie',
+                    coffees: 'Kawy',
+                    coffeesPerDay: '~1,5 dziennie',
+                    timesPeed: 'Razy siku',
+                    peePerDay: '~7 dziennie',
+                    timesPooped: 'Razy kupa',
+                    poopPerDay: '~1,5 dziennie',
+                    steps: 'Kroki',
+                    stepsPerDay: '~5 000 dziennie',
+                    words: 'Wypowiedziane słowa',
+                    wordsPerDay: '~16 000 dziennie',
+                    kmSpace: 'Km przez kosmos',
+                    earthSpeed: 'Ziemia: 107 000 km/h'
+                }
+            }
+        };
+
+        // Western Zodiac
+        const getWesternZodiac = (day, month) => {
+            const zodiacs = [
+                { name: 'Capricorn', namePl: 'Koziorożec', icon: '♑', start: [1, 1], end: [1, 19] },
+                { name: 'Aquarius', namePl: 'Wodnik', icon: '♒', start: [1, 20], end: [2, 18] },
+                { name: 'Pisces', namePl: 'Ryby', icon: '♓', start: [2, 19], end: [3, 20] },
+                { name: 'Aries', namePl: 'Baran', icon: '♈', start: [3, 21], end: [4, 19] },
+                { name: 'Taurus', namePl: 'Byk', icon: '♉', start: [4, 20], end: [5, 20] },
+                { name: 'Gemini', namePl: 'Bliźnięta', icon: '♊', start: [5, 21], end: [6, 20] },
+                { name: 'Cancer', namePl: 'Rak', icon: '♋', start: [6, 21], end: [7, 22] },
+                { name: 'Leo', namePl: 'Lew', icon: '♌', start: [7, 23], end: [8, 22] },
+                { name: 'Virgo', namePl: 'Panna', icon: '♍', start: [8, 23], end: [9, 22] },
+                { name: 'Libra', namePl: 'Waga', icon: '♎', start: [9, 23], end: [10, 22] },
+                { name: 'Scorpio', namePl: 'Skorpion', icon: '♏', start: [10, 23], end: [11, 21] },
+                { name: 'Sagittarius', namePl: 'Strzelec', icon: '♐', start: [11, 22], end: [12, 21] },
+                { name: 'Capricorn', namePl: 'Koziorożec', icon: '♑', start: [12, 22], end: [12, 31] }
+            ];
+
+            const m = parseInt(month);
+            const d = parseInt(day);
+
+            for (const z of zodiacs) {
+                const [startM, startD] = z.start;
+                const [endM, endD] = z.end;
+                
+                if ((m === startM && d >= startD) || (m === endM && d <= endD)) {
+                    return z;
+                }
+            }
+            return zodiacs[0];
+        };
+
+        // Chinese Zodiac
+        const getChineseZodiac = (year) => {
+            const animals = [
+                { name: 'Rat', namePl: 'Szczur', icon: '🐀' },
+                { name: 'Ox', namePl: 'Bawół', icon: '🐂' },
+                { name: 'Tiger', namePl: 'Tygrys', icon: '🐅' },
+                { name: 'Rabbit', namePl: 'Królik', icon: '🐇' },
+                { name: 'Dragon', namePl: 'Smok', icon: '🐉' },
+                { name: 'Snake', namePl: 'Wąż', icon: '🐍' },
+                { name: 'Horse', namePl: 'Koń', icon: '🐴' },
+                { name: 'Goat', namePl: 'Koza', icon: '🐐' },
+                { name: 'Monkey', namePl: 'Małpa', icon: '🐒' },
+                { name: 'Rooster', namePl: 'Kogut', icon: '🐓' },
+                { name: 'Dog', namePl: 'Pies', icon: '🐕' },
+                { name: 'Pig', namePl: 'Świnia', icon: '🐖' }
+            ];
+            
+            const index = (parseInt(year) - 4) % 12;
+            return animals[index];
+        };
+
+        // Helper functions
+        const formatNumber = (num) => {
+            return new Intl.NumberFormat('pl-PL').format(Math.floor(num));
+        };
+
+        const formatLargeNumber = (num) => {
+            const floor = Math.floor(num);
+            if (floor >= 1_000_000_000) {
+                return {
+                    value: (floor / 1_000_000_000).toFixed(2),
+                    suffix: 'mld',
+                    full: formatNumber(floor)
+                };
+            } else if (floor >= 1_000_000) {
+                return {
+                    value: (floor / 1_000_000).toFixed(2),
+                    suffix: 'mln',
+                    full: formatNumber(floor)
+                };
+            }
+            return {
+                value: formatNumber(floor),
+                suffix: '',
+                full: null
+            };
+        };
+
+        const calculateStats = (birthDate) => {
+            const now = new Date();
+            const birth = new Date(birthDate);
+            const ageInMs = now - birth;
+            const ageInSeconds = ageInMs / 1000;
+            const ageInMinutes = ageInSeconds / 60;
+            const ageInHours = ageInMinutes / 60;
+            const ageInDays = ageInHours / 24;
+            const ageInYears = ageInDays / 365.25;
+
+            // Moon cycle is approximately 29.53 days
+            const fullMoons = Math.floor(ageInDays / 29.53);
+
+            // Average heartbeat: 70 bpm
+            const heartbeats = ageInMinutes * 70;
+
+            // Average breaths: 16 per minute
+            const breaths = ageInMinutes * 16;
+
+            // Sleep: average 8 hours per day
+            const hoursSlept = ageInDays * 8;
+            const yearsSlept = hoursSlept / (24 * 365.25);
+
+            // Pizza: average Polish person eats about 5kg of pizza per year
+            // Average pizza is about 400g, so ~12 pizzas per year
+            const pizzasEaten = Math.floor(ageInYears * 12);
+
+            // Coffee: average 2 cups per day (adults drink more, kids less)
+            const coffeeCups = Math.floor(ageInDays * 1.5);
+
+            // Words spoken: average 16,000 per day
+            const wordsSpoken = ageInDays * 16000;
+
+            // Steps: average 5,000 per day
+            const steps = ageInDays * 5000;
+
+            // Blinks: average 15-20 per minute, let's say 17
+            const blinks = ageInMinutes * 17;
+
+            // Dreams: average 4-6 dreams per night
+            const dreams = Math.floor(ageInDays * 5);
+
+            // Laps around the sun
+            const orbits = ageInYears;
+
+            // Distance traveled around sun: Earth moves at ~107,000 km/h
+            const kmAroundSun = ageInHours * 107000;
+
+            // Food eaten: average ~1.5-2kg per day, let's say 1.8kg
+            const foodKg = ageInDays * 1.8;
+
+            // Liquids drunk: average ~2.5 liters per day
+            const liquidsLiters = ageInDays * 2.5;
+
+            // Pee: average 6-8 times per day
+            const peeTimes = Math.floor(ageInDays * 7);
+
+            // Poop: average 1-2 times per day
+            const poopTimes = Math.floor(ageInDays * 1.5);
+
+            return {
+                seconds: ageInSeconds,
+                minutes: ageInMinutes,
+                hours: ageInHours,
+                days: ageInDays,
+                years: ageInYears,
+                fullMoons,
+                heartbeats,
+                breaths,
+                yearsSlept,
+                pizzasEaten,
+                coffeeCups,
+                wordsSpoken,
+                steps,
+                blinks,
+                dreams,
+                orbits,
+                kmAroundSun,
+                foodKg,
+                liquidsLiters,
+                peeTimes,
+                poopTimes
+            };
+        };
+
+        const StatCard = ({ icon, label, value, detail, live, large, shareKey, shareValue, t, onShare }) => {
+            const formatted = large ? formatLargeNumber(value) : null;
+            
+            const handleShare = () => {
+                const message = t.shareMessages[shareKey]?.replace('{value}', shareValue || (formatted ? `${formatted.value} ${formatted.suffix}`.trim() : value));
+                if (message) {
+                    onShare(message);
+                }
+            };
+            
+            return (
+                <div className={`stat-card ${live ? 'live' : ''}`}>
+                    <button className="share-btn" onClick={handleShare}>
+                        📤 {t.share}
+                    </button>
+                    <div className="stat-icon">{icon}</div>
+                    <div className="stat-content">
+                        <div className="stat-label">
+                            {live && <span className="live-indicator"></span>}
+                            {label}
+                        </div>
+                        <div className="stat-value">
+                            {large ? (
+                                <>
+                                    <span>{formatted.value}</span>
+                                    {formatted.suffix && <span className="stat-suffix">{formatted.suffix}</span>}
+                                    {formatted.full && <span className="stat-full">{formatted.full}</span>}
+                                </>
+                            ) : (
+                                <span>{value}</span>
+                            )}
+                        </div>
+                        {detail && <div className="stat-detail">{detail}</div>}
+                    </div>
+                </div>
+            );
+        };
+
+        const Section = ({ icon, title, children }) => (
+            <div className="stats-section">
+                <div className="section-header">
+                    <span className="section-icon">{icon}</span>
+                    <span className="section-title">{title}</span>
+                </div>
+                <div className="stats-grid">
+                    {children}
+                </div>
+            </div>
+        );
+
+        const App = () => {
+            const [day, setDay] = useState('');
+            const [month, setMonth] = useState('');
+            const [year, setYear] = useState('');
+            const [stats, setStats] = useState(null);
+            const [lang, setLang] = useState('en');
+            const [toast, setToast] = useState(null);
+
+            const t = translations[lang];
+
+            const handleShare = async (message) => {
+                const fullMessage = message + '\n\nhttps://lifestats.app';
+                
+                if (navigator.share) {
+                    try {
+                        await navigator.share({ text: fullMessage });
+                    } catch (e) {
+                        // User cancelled or share failed, fallback to clipboard
+                        await navigator.clipboard.writeText(fullMessage);
+                        setToast(t.copied);
+                    }
+                } else {
+                    await navigator.clipboard.writeText(fullMessage);
+                    setToast(t.copied);
+                }
+                
+                setTimeout(() => setToast(null), 2500);
+            };
+
+            const dayRef = React.useRef(null);
+            const monthRef = React.useRef(null);
+            const yearRef = React.useRef(null);
+
+            const handleDayChange = (e) => {
+                const value = e.target.value.replace(/\D/g, '').slice(0, 2);
+                setDay(value);
+                if (value.length === 2) {
+                    monthRef.current?.focus();
+                }
+            };
+
+            const handleMonthChange = (e) => {
+                const value = e.target.value.replace(/\D/g, '').slice(0, 2);
+                setMonth(value);
+                if (value.length === 2) {
+                    yearRef.current?.focus();
+                }
+            };
+
+            const handleYearChange = (e) => {
+                const value = e.target.value.replace(/\D/g, '').slice(0, 4);
+                setYear(value);
+            };
+
+            const handleKeyDown = (e, field) => {
+                if (e.key === 'Backspace' && e.target.value === '') {
+                    if (field === 'month') {
+                        dayRef.current?.focus();
+                    } else if (field === 'year') {
+                        monthRef.current?.focus();
+                    }
+                }
+            };
+
+            const westernZodiac = day.length === 2 && month.length === 2 ? getWesternZodiac(day, month) : null;
+            const chineseZodiac = year.length === 4 ? getChineseZodiac(year) : null;
+
+            useEffect(() => {
+                if (day.length === 2 && month.length === 2 && year.length === 4) {
+                    const birthDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                    const date = new Date(birthDate);
+                    const now = new Date();
+                    
+                    // Validate date
+                    if (date instanceof Date && !isNaN(date) && date < now) {
+                        const interval = setInterval(() => {
+                            setStats(calculateStats(birthDate));
+                        }, 100);
+                        return () => clearInterval(interval);
+                    }
+                }
+                setStats(null);
+            }, [day, month, year]);
+
+            return (
+                <div className="container">
+                    <header className="header">
+                        <div className="language-selector">
+                            <button 
+                                className={`lang-btn ${lang === 'en' ? 'active' : ''}`}
+                                onClick={() => setLang('en')}
+                            >
+                                English
+                            </button>
+                            <button 
+                                className={`lang-btn ${lang === 'pl' ? 'active' : ''}`}
+                                onClick={() => setLang('pl')}
+                            >
+                                Polski
+                            </button>
+                        </div>
+                        <h1>{t.title}</h1>
+                        <p>{t.subtitle}</p>
+                    </header>
+
+                    <div className="date-input-container">
+                        <div className="date-input-wrapper">
+                            <label>{t.birthDate}</label>
+                            <div className="date-fields">
+                                <input
+                                    ref={dayRef}
+                                    type="text"
+                                    inputMode="numeric"
+                                    className="date-field day"
+                                    placeholder="DD"
+                                    value={day}
+                                    onChange={handleDayChange}
+                                    maxLength={2}
+                                />
+                                <span className="date-separator">/</span>
+                                <input
+                                    ref={monthRef}
+                                    type="text"
+                                    inputMode="numeric"
+                                    className="date-field month"
+                                    placeholder="MM"
+                                    value={month}
+                                    onChange={handleMonthChange}
+                                    onKeyDown={(e) => handleKeyDown(e, 'month')}
+                                    maxLength={2}
+                                />
+                                <span className="date-separator">/</span>
+                                <input
+                                    ref={yearRef}
+                                    type="text"
+                                    inputMode="numeric"
+                                    className="date-field year"
+                                    placeholder="YYYY"
+                                    value={year}
+                                    onChange={handleYearChange}
+                                    onKeyDown={(e) => handleKeyDown(e, 'year')}
+                                    maxLength={4}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {stats ? (
+                        <>
+                            <div className="age-hero">
+                                <div className="age-display">
+                                    <div className="label">{t.yourAge}</div>
+                                    <div className="age-main">
+                                        {Math.floor(stats.years)} <span className="suffix">{t.years}</span>
+                                    </div>
+                                </div>
+
+                                <div className="zodiac-display">
+                                    {westernZodiac && (
+                                        <div className="zodiac-card">
+                                            <div className="icon">{westernZodiac.icon}</div>
+                                            <div className="name">{lang === 'pl' ? westernZodiac.namePl : westernZodiac.name}</div>
+                                            <div className="type">{t.westernZodiac}</div>
+                                        </div>
+                                    )}
+                                    {chineseZodiac && (
+                                        <div className="zodiac-card">
+                                            <div className="icon">{chineseZodiac.icon}</div>
+                                            <div className="name">{lang === 'pl' ? chineseZodiac.namePl : chineseZodiac.name}</div>
+                                            <div className="type">{t.chineseZodiac}</div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <Section icon="⏱️" title={t.sections.timeAlive}>
+                                <StatCard
+                                    icon="⏳"
+                                    label={t.stats.seconds}
+                                    value={stats.seconds}
+                                    large={true}
+                                    live={true}
+                                    shareKey="seconds"
+                                    t={t}
+                                    onShare={handleShare}
+                                />
+                                <StatCard
+                                    icon="📅"
+                                    label={t.stats.days}
+                                    value={formatNumber(stats.days)}
+                                    shareKey="days"
+                                    shareValue={formatNumber(stats.days)}
+                                    t={t}
+                                    onShare={handleShare}
+                                />
+                                <StatCard
+                                    icon="🎂"
+                                    label={t.stats.orbits}
+                                    value={stats.orbits.toFixed(2)}
+                                    detail={t.stats.yearsOnEarth}
+                                    shareKey="orbits"
+                                    shareValue={stats.orbits.toFixed(2)}
+                                    t={t}
+                                    onShare={handleShare}
+                                />
+                                <StatCard
+                                    icon="🌕"
+                                    label={t.stats.fullMoons}
+                                    value={formatNumber(stats.fullMoons)}
+                                    detail={t.stats.moonCycle}
+                                    shareKey="fullMoons"
+                                    shareValue={formatNumber(stats.fullMoons)}
+                                    t={t}
+                                    onShare={handleShare}
+                                />
+                            </Section>
+
+                            <Section icon="💓" title={t.sections.body}>
+                                <StatCard
+                                    icon="❤️"
+                                    label={t.stats.heartbeats}
+                                    value={stats.heartbeats}
+                                    detail={t.stats.bpm}
+                                    large={true}
+                                    live={true}
+                                    shareKey="heartbeats"
+                                    t={t}
+                                    onShare={handleShare}
+                                />
+                                <StatCard
+                                    icon="🌬️"
+                                    label={t.stats.breaths}
+                                    value={stats.breaths}
+                                    detail={t.stats.breathsPerMin}
+                                    large={true}
+                                    live={true}
+                                    shareKey="breaths"
+                                    t={t}
+                                    onShare={handleShare}
+                                />
+                                <StatCard
+                                    icon="👁️"
+                                    label={t.stats.blinks}
+                                    value={stats.blinks}
+                                    detail={t.stats.blinksPerMin}
+                                    large={true}
+                                    live={true}
+                                    shareKey="blinks"
+                                    t={t}
+                                    onShare={handleShare}
+                                />
+                                <StatCard
+                                    icon="😴"
+                                    label={t.stats.yearsAsleep}
+                                    value={stats.yearsSlept.toFixed(1)}
+                                    detail={t.stats.sleepPerNight}
+                                    shareKey="yearsAsleep"
+                                    shareValue={stats.yearsSlept.toFixed(1)}
+                                    t={t}
+                                    onShare={handleShare}
+                                />
+                                <StatCard
+                                    icon="💭"
+                                    label={t.stats.dreams}
+                                    value={formatNumber(stats.dreams)}
+                                    detail={t.stats.dreamsPerNight}
+                                    shareKey="dreams"
+                                    shareValue={formatNumber(stats.dreams)}
+                                    t={t}
+                                    onShare={handleShare}
+                                />
+                            </Section>
+
+                            <Section icon="🍽️" title={t.sections.foodDrinks}>
+                                <StatCard
+                                    icon="🍔"
+                                    label={t.stats.foodEaten}
+                                    value={formatNumber(stats.foodKg) + " kg"}
+                                    detail={t.stats.foodPerDay}
+                                    shareKey="foodEaten"
+                                    shareValue={formatNumber(stats.foodKg) + " kg"}
+                                    t={t}
+                                    onShare={handleShare}
+                                />
+                                <StatCard
+                                    icon="🥤"
+                                    label={t.stats.liquidsDrunk}
+                                    value={formatNumber(stats.liquidsLiters) + " L"}
+                                    detail={t.stats.liquidsPerDay}
+                                    shareKey="liquidsDrunk"
+                                    shareValue={formatNumber(stats.liquidsLiters) + " L"}
+                                    t={t}
+                                    onShare={handleShare}
+                                />
+                                <StatCard
+                                    icon="🍕"
+                                    label={t.stats.pizzas}
+                                    value={formatNumber(stats.pizzasEaten)}
+                                    detail={t.stats.pizzasPerYear}
+                                    shareKey="pizzas"
+                                    shareValue={formatNumber(stats.pizzasEaten)}
+                                    t={t}
+                                    onShare={handleShare}
+                                />
+                                <StatCard
+                                    icon="☕"
+                                    label={t.stats.coffees}
+                                    value={formatNumber(stats.coffeeCups)}
+                                    detail={t.stats.coffeesPerDay}
+                                    shareKey="coffees"
+                                    shareValue={formatNumber(stats.coffeeCups)}
+                                    t={t}
+                                    onShare={handleShare}
+                                />
+                            </Section>
+
+                            <Section icon="🚽" title={t.sections.bathroom}>
+                                <StatCard
+                                    icon="💧"
+                                    label={t.stats.timesPeed}
+                                    value={formatNumber(stats.peeTimes)}
+                                    detail={t.stats.peePerDay}
+                                    shareKey="timesPeed"
+                                    shareValue={formatNumber(stats.peeTimes)}
+                                    t={t}
+                                    onShare={handleShare}
+                                />
+                                <StatCard
+                                    icon="💩"
+                                    label={t.stats.timesPooped}
+                                    value={formatNumber(stats.poopTimes)}
+                                    detail={t.stats.poopPerDay}
+                                    shareKey="timesPooped"
+                                    shareValue={formatNumber(stats.poopTimes)}
+                                    t={t}
+                                    onShare={handleShare}
+                                />
+                            </Section>
+
+                            <Section icon="🚀" title={t.sections.activity}>
+                                <StatCard
+                                    icon="👟"
+                                    label={t.stats.steps}
+                                    value={stats.steps}
+                                    detail={t.stats.stepsPerDay}
+                                    large={true}
+                                    shareKey="steps"
+                                    t={t}
+                                    onShare={handleShare}
+                                />
+                                <StatCard
+                                    icon="🗣️"
+                                    label={t.stats.words}
+                                    value={stats.wordsSpoken}
+                                    detail={t.stats.wordsPerDay}
+                                    large={true}
+                                    shareKey="words"
+                                    t={t}
+                                    onShare={handleShare}
+                                />
+                                <StatCard
+                                    icon="🌍"
+                                    label={t.stats.kmSpace}
+                                    value={stats.kmAroundSun}
+                                    detail={t.stats.earthSpeed}
+                                    large={true}
+                                    shareKey="kmSpace"
+                                    t={t}
+                                    onShare={handleShare}
+                                />
+                            </Section>
+
+                            {toast && <div className="share-toast">{toast}</div>}
+                        </>
+                    ) : (
+                        <div className="empty-state">
+                            <p>{t.emptyState}</p>
+                        </div>
+                    )}
+
+                    <footer className="footer">
+                        <p>{t.footer}</p>
+                    </footer>
+                </div>
+            );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>

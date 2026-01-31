@@ -1,0 +1,9 @@
+{
+  "name": "lifestats",
+  "version": "1.0.0",
+  "description": "Your life in numbers - fun statistics dashboard",
+  "scripts": {
+    "start": "npx serve public",
+    "build": "echo 'Static site, no build needed'"
+  }
+}
